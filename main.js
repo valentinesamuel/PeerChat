@@ -75,6 +75,8 @@ let createPeerConnection = async (memberId) => {
     document.getElementById('user-2').srcObject = remoteStream
     document.getElementById('user-2').style.display = 'block'
 
+    document.getElementById('user-1').classList.add('smallFrame')
+
     if (!localStream) {
         localStream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
         document.getElementById('user-1').srcObject = localStream
@@ -132,11 +134,24 @@ let addAnswer = async (answer) => {
     }
 }
 
+let toggleCamera = async () => {
+    let videoTrack = localStream.getTracks().find(track => track.kind === 'video')
+
+    if (videoTrack.enabled) {
+        videoTrack.enabled = false
+        document.getElementById('camera-btn').style.backgroundColor = 'rgb(255, 80, 80)'
+    } else {
+        videoTrack.enabled = true
+        document.getElementById('camera-btn').style.backgroundColor = 'rgb(179, 102, 249, .9)'
+    }
+}
+
 let leaveChannel = async () => {
     await channel.leave()
     await client.logout()
 }
 
+document.getElementById('camera-btn').addEventListener('click', toggleCamera)
 window.addEventListener('beforeunload', leaveChannel)
 
 init()
